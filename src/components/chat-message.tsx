@@ -16,9 +16,11 @@ interface Message {
 interface ChatMessageProps {
   message: Message;
   showDiacritics?: boolean;
+  onClick?: () => void;
+  isSelected?: boolean;
 }
 
-export function ChatMessage({ message, showDiacritics = true }: ChatMessageProps) {
+export function ChatMessage({ message, showDiacritics = true, onClick, isSelected }: ChatMessageProps) {
   const isBot = message.type === 'bot';
   
   // Function to remove diacritics if setting is disabled
@@ -41,8 +43,12 @@ export function ChatMessage({ message, showDiacritics = true }: ChatMessageProps
   
   if (isBot) {
     return (
-      <div className="flex justify-start">
-        <div className="max-w-[85%] bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border">
+      <div className="flex justify-start" onClick={onClick}>
+        <div 
+          className={`max-w-[85%] bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border cursor-pointer
+            ${isSelected ? 'bg-blue-50 ring-2 ring-blue-500' : ''}
+          `}
+        >
           {/* Romanian text with flag */}
           <div className="flex items-start space-x-2 mb-2">
             <span className="text-base">{processRomanianText(message.content)}</span>
@@ -62,36 +68,6 @@ export function ChatMessage({ message, showDiacritics = true }: ChatMessageProps
               {message.translation}
             </div>
           )}
-
-          {/* Audio controls */}
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-1 text-xs h-8"
-            >
-              <Play className="h-3 w-3" />
-              <span>Play</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-1 text-xs h-8"
-            >
-              <Volume2 className="h-3 w-3" />
-              <span>Slow</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-1 text-xs h-8"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span>Replace</span>
-            </Button>
-          </div>
 
           {/* Level indicator */}
           {message.level !== undefined && (
